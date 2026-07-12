@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import ProjectCard from "@/components/ProjectCard";
+import { getAssetUrl } from "@/config/video";
 import { portfolioData } from "@/data/projects";
 
 export default function Home() {
@@ -43,7 +44,7 @@ export default function Home() {
                 Github
               </a>
               <a
-                href={portfolioData.resume}
+                href={getAssetUrl(portfolioData.resume)}
                 rel="nofollow"
                 className="text-sm text-[#a0a0a0] hover:text-white transition-colors duration-150"
               >

@@ -61,10 +61,17 @@ export default function VideoPlayer({ src, poster, className }: VideoPlayerProps
       releaseVideo(videoRef.current);
       setIsPlaying(false);
     } else {
-      requestPlay(videoRef.current);
+      if (isTouch) {
+        // Mobile: enable native controls for reliable playback
+        videoRef.current.controls = true;
+        const p = videoRef.current.play();
+        if (p) p.catch(() => {});
+      } else {
+        requestPlay(videoRef.current);
+      }
       setIsPlaying(true);
     }
-  }, [isPlaying, isVideo, requestPlay, releaseVideo]);
+  }, [isPlaying, isVideo, isTouch, requestPlay, releaseVideo]);
 
   const handleEnded = () => {
     setIsPlaying(false);
@@ -159,13 +166,14 @@ export default function VideoPlayer({ src, poster, className }: VideoPlayerProps
         onLoadedMetadata={handleLoadedMetadata}
         onError={handleError}
         onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
+        onPause={() => { setIsPlaying(false); if (videoRef.current) videoRef.current.controls = false; }}
         onEnded={handleEnded}
-        onClick={togglePlay}
+        onClick={(e) => { if (isTouch) return; e.stopPropagation(); togglePlay(); }}
         playsInline
         disablePictureInPicture
         controlsList="nodownload"
         preload="metadata"
+        muted
       />
 
       {/* Big play button overlay */}
@@ -174,8 +182,8 @@ export default function VideoPlayer({ src, poster, className }: VideoPlayerProps
           className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
           onClick={togglePlay}
         >
-          <div className="w-14 h-14 flex items-center justify-center rounded-full bg-white/90 hover:bg-white transition-colors duration-150">
-            <Play className="w-6 h-6 text-black ml-0.5" />
+          <div className={`${isTouch ? "w-16 h-16" : "w-14 h-14"} flex items-center justify-center rounded-full bg-white/90 hover:bg-white transition-colors duration-150`}>
+            <Play className={`${isTouch ? "w-7 h-7" : "w-6 h-6"} text-black ml-0.5`} />
           </div>
         </div>
       )}

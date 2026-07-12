@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import { getAssetUrl } from "@/config/video";
 import { portfolioData } from "@/data/projects";
 
 export default function AboutPage() {
@@ -23,7 +24,7 @@ export default function AboutPage() {
               Github
             </a>
             <a
-              href={portfolioData.resume}
+              href={getAssetUrl(portfolioData.resume)}
               className="text-sm text-[#a0a0a0] hover:text-white transition-colors duration-150"
             >
               Resume

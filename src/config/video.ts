@@ -28,10 +28,31 @@ export const videoConfig = {
 } as const;
 
 /**
+ * GitHub Pages 子路径前缀（构建期由 NEXT_PUBLIC_BASE_PATH 注入）。
+ * 本地开发不设置该变量，basePath 为空，资源从根路径加载。
+ */
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+/**
+ * 统一拼接公共资源路径前缀（图片 / 视频 / PDF / Resume 等）。
+ * - 绝对 URL（含 http、mailto）→ 原样返回
+ * - 本地裸路径（如 /projects/x.png）→ 拼接 basePath 返回 /<repo>/projects/x.png
+ */
+export function getAssetUrl(path: string): string {
+  if (!path) return "";
+  if (/^(https?:)?\/\//.test(path)) return path;
+  if (/^(mailto:|tel:)/.test(path)) return path;
+
+  const base = BASE_PATH.replace(/^\/+|\/+$/g, "");
+  const cleanPath = path.replace(/^\/+/, "");
+  return base ? `/${base}/${cleanPath}` : `/${cleanPath}`;
+}
+
+/**
  * 解析视频完整 URL
  * - 已是绝对 URL → 直接返回
- * - 配置了 CDN → 拼接 CDN baseUrl
- * - 否则 → 返回本地路径
+ * - 配置了 CDN → 拼接 CDN baseUrl（忽略 basePath）
+ * - 否则 → 拼接 GitHub Pages 子路径前缀
  */
 export function getVideoUrl(path: string): string {
   if (!path) return "";
@@ -44,7 +65,7 @@ export function getVideoUrl(path: string): string {
     return `${cleanBase}/${cleanPath}`;
   }
 
-  return path;
+  return getAssetUrl(path);
 }
 
 /**

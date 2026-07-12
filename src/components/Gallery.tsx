@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { getAssetUrl } from "@/config/video";
 import type { GalleryImage } from "@/data/projects";
 
 interface GalleryProps {
@@ -97,7 +98,7 @@ export default function Gallery({ images }: GalleryProps) {
           {/* Image */}
           <div className="max-w-[90vw] max-h-[85vh] flex items-center justify-center z-10">
             <img
-              src={images[selectedIndex].src}
+              src={getAssetUrl(images[selectedIndex].src)}
               alt={images[selectedIndex].alt}
               className="max-w-full max-h-[85vh] object-contain rounded-sm"
               onClick={(e) => e.stopPropagation()}
@@ -211,7 +212,7 @@ function CategoryRow({
               className="flex-shrink-0 w-[260px] md:w-[320px] aspect-video bg-[#1a1a1a] border border-[#2a2a2a] rounded-md overflow-hidden cursor-pointer hover:border-[#3a3a3a] transition-all duration-150 group"
             >
               <img
-                src={image.src}
+                src={getAssetUrl(image.src)}
                 alt={image.alt}
                 className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
                 loading="lazy"

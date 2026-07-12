@@ -74,13 +74,13 @@ export const portfolioData: PortfolioData = {
       trailer: {
         video: "/projects/guiyuan/trailer.mp4",
         thumbnail: "/projects/guiyuan/cover.png",
-        duration: "1:30",
+        duration: "2:41",
         label: "Official Trailer",
       },
       completeDemo: {
         video: "/projects/guiyuan/demo.mp4",
         thumbnail: "/projects/guiyuan/cover.png",
-        duration: "3:45",
+        duration: "12:12",
       },
       featureClips: [
         {
@@ -89,7 +89,7 @@ export const portfolioData: PortfolioData = {
           description: "物体投掷与抛物线轨迹判定",
           thumbnail: "",
           video: "/projects/guiyuan/features/guiyuan-feature-throwing.mp4",
-          duration: "0:25",
+          duration: "0:18",
         },
         {
           id: "execution",
@@ -97,7 +97,7 @@ export const portfolioData: PortfolioData = {
           description: "近距离终结技与动画状态切换",
           thumbnail: "",
           video: "/projects/guiyuan/features/guiyuan-feature-execution.mp4",
-          duration: "0:20",
+          duration: "0:14",
         },
         {
           id: "assassination-qte",
@@ -105,7 +105,7 @@ export const portfolioData: PortfolioData = {
           description: "潜行接近后的快速反应事件与成功判定",
           thumbnail: "",
           video: "/projects/guiyuan/features/guiyuan-feature-assassination-qte.mp4",
-          duration: "0:30",
+          duration: "0:11",
         },
         {
           id: "enemy-freeze",
@@ -113,7 +113,7 @@ export const portfolioData: PortfolioData = {
           description: "敌人行为暂停与冻结状态控制",
           thumbnail: "",
           video: "/projects/guiyuan/features/guiyuan-feature-enemy-freeze.mp4",
-          duration: "0:28",
+          duration: "0:14",
         },
         {
           id: "spacetime-traversal",
@@ -121,7 +121,7 @@ export const portfolioData: PortfolioData = {
           description: "跨维度场景切换与时空穿越玩法",
           thumbnail: "",
           video: "/projects/guiyuan/features/guiyuan-feature-spacetime-traversal.mp4",
-          duration: "0:26",
+          duration: "0:43",
         },
       ],
       gallery: [
@@ -215,13 +215,13 @@ export const portfolioData: PortfolioData = {
       trailer: {
         video: "/projects/guiyuan-minnan/trailer.mp4",
         thumbnail: "/projects/guiyuan-minnan/cover.png",
-        duration: "1:30",
+        duration: "3:14",
         label: "Official Trailer",
       },
       completeDemo: {
         video: "/projects/guiyuan-minnan/demo.mp4",
         thumbnail: "/projects/guiyuan-minnan/cover.png",
-        duration: "4:20",
+        duration: "1:43",
       },
       featureClips: [
         {
@@ -230,7 +230,7 @@ export const portfolioData: PortfolioData = {
           description: "附身控制、目标切换与敌人面板激活",
           thumbnail: "",
           video: "/projects/guiyuan-minnan/features/guiyuan-minnan-feature-possession.mp4",
-          duration: "0:30",
+          duration: "0:11",
         },
         {
           id: "near-death-heal",
@@ -238,7 +238,7 @@ export const portfolioData: PortfolioData = {
           description: "低生命值状态下的恢复与生存系统",
           thumbnail: "",
           video: "/projects/guiyuan-minnan/features/guiyuan-minnan-feature-near-death-heal.mp4",
-          duration: "0:25",
+          duration: "0:33",
         },
         {
           id: "drone-interaction",
@@ -246,7 +246,7 @@ export const portfolioData: PortfolioData = {
           description: "无人机实体操控与场景交互",
           thumbnail: "",
           video: "/projects/guiyuan-minnan/features/guiyuan-minnan-feature-drone-interaction.mp4",
-          duration: "0:20",
+          duration: "0:31",
         },
         {
           id: "save-system",
@@ -254,7 +254,7 @@ export const portfolioData: PortfolioData = {
           description: "游戏进度存档、读取与管理",
           thumbnail: "",
           video: "/projects/guiyuan-minnan/features/guiyuan-minnan-feature-save-system.mp4",
-          duration: "0:22",
+          duration: "2:17",
         },
       ],
       gallery: [

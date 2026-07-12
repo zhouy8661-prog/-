@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { getAssetUrl } from "@/config/video";
 import VideoPlayer from "@/components/VideoPlayer";
-import FeatureCard from "@/components/FeatureCard";
+import FeatureClipsSection from "@/components/FeatureClipsSection";
 import Gallery from "@/components/Gallery";
 import VideoPlaybackWrapper from "@/components/VideoPlaybackWrapper";
 import { portfolioData } from "@/data/projects";
@@ -92,17 +93,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </section>
 
           {/* Feature Clips Section */}
-          <section id="features" className="mb-16">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-0.5 h-4 bg-white" />
-              <h2 className="text-base font-medium text-white">Feature Clips</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {project.featureClips.map((clip) => (
-                <FeatureCard key={clip.id} clip={clip} />
-              ))}
-            </div>
-          </section>
+          <FeatureClipsSection clips={project.featureClips} />
 
           {/* Gallery Section */}
           {project.gallery.length > 0 && (
@@ -123,7 +114,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 <h2 className="text-base font-medium text-white">Project PDF</h2>
               </div>
               <a
-                href={project.pdf}
+                href={getAssetUrl(project.pdf)}
                 rel="nofollow"
                 className="inline-flex items-center gap-2 px-4 py-2.5 text-sm bg-white text-black rounded-md hover:bg-[#e5e5e5] transition-all duration-150"
               >

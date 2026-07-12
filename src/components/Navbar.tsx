@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getAssetUrl } from "@/config/video";
 
 const navLinks = [
   { href: "/", label: "Library" },
@@ -35,11 +36,11 @@ export default function Navbar() {
           ))}
         </div>
         <div className="flex items-center gap-6">
-          {externalLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target={link.href.startsWith("http") ? "_blank" : undefined}
+            {externalLinks.map((link) => (
+              <a
+                key={link.label}
+                href={getAssetUrl(link.href)}
+                target={link.href.startsWith("http") ? "_blank" : undefined}
               rel={link.href.startsWith("http") ? "noopener noreferrer nofollow" : "nofollow"}
               className="text-sm text-[#a0a0a0] hover:text-white transition-colors duration-150"
             >

@@ -42,15 +42,27 @@
       border-radius: 12px;
       margin-bottom: 24px;
     }
+    .url-row {
+      margin-bottom: 16px;
+    }
+    .url-label {
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
     .url {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       color: #38bdf8;
       word-break: break-all;
-      margin-bottom: 24px;
-      padding: 12px 20px;
+      padding: 10px 18px;
       background: #0f172a;
       border-radius: 8px;
+    }
+    .url-row:last-of-type {
+      margin-bottom: 24px;
     }
     .tip {
       font-size: 13px;
@@ -65,13 +77,20 @@
 </head>
 <body>
   <div class="container">
-    <div class="title">作品集 · 手机扫码访问</div>
+    <div class="title">作品集 · 扫码访问</div>
     <div class="subtitle">请确保手机和电脑连接同一个 WiFi</div>
     <div id="qrcode"></div>
-    <div class="url">http://192.168.100.36:3000</div>
+    <div class="url-row">
+      <div class="url-label">📱 手机扫码</div>
+      <div class="url">http://192.168.100.36:3000</div>
+    </div>
+    <div class="url-row">
+      <div class="url-label">💻 电脑打开</div>
+      <div class="url">http://localhost:3000</div>
+    </div>
     <div class="tip">
       用手机相机或微信扫码即可打开<br>
-      ⚠️ 访问前请确认 <span>Windows 防火墙已放行端口 3000</span>
+      ⚠️ 如果手机打不开，请确认 <span>Windows 防火墙已放行端口 3000</span>
     </div>
   </div>
   <script>
