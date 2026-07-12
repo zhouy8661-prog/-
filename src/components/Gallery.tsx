@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { GalleryImage } from "@/data/projects";
 
@@ -52,35 +52,17 @@ export default function Gallery({ images }: GalleryProps) {
 
   return (
     <>
-      {/* Grid */}
+      {/* Horizontal Scroll by Category */}
       <div className="space-y-8">
         {categories.map((category) => {
           const categoryImages = images.filter((img) => img.category === category);
           return (
-            <div key={category}>
-              <h3 className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wider mb-3">
-                {category}
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {categoryImages.map((image, idx) => {
-                  const globalIndex = images.indexOf(image);
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => open(globalIndex)}
-                      className="aspect-video bg-[#1a1a1a] border border-[#2a2a2a] rounded-md overflow-hidden cursor-pointer hover:border-[#3a3a3a] transition-all duration-150 group"
-                    >
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
-                        loading="lazy"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            <CategoryRow
+              key={category}
+              category={category}
+              images={categoryImages}
+              onOpen={(img) => open(images.indexOf(img))}
+            />
           );
         })}
       </div>
@@ -137,5 +119,107 @@ export default function Gallery({ images }: GalleryProps) {
         </div>
       )}
     </>
+  );
+}
+
+/* ── Category Row with horizontal scroll ── */
+function CategoryRow({
+  category,
+  images,
+  onOpen,
+}: {
+  category: string;
+  images: GalleryImage[];
+  onOpen: (img: GalleryImage) => void;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 2);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [checkScroll]);
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.75;
+    el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
+  };
+
+  return (
+    <div>
+      {/* Header row with arrows */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-xs font-medium text-[#a0a0a0] uppercase tracking-wider">
+          {category}
+        </h3>
+        {images.length > 0 && (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => scroll("left")}
+              disabled={!canScrollLeft}
+              className="w-6 h-6 flex items-center justify-center rounded border border-[#2a2a2a] text-[#666] hover:text-white hover:border-[#444] disabled:opacity-20 disabled:cursor-default transition-colors"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              disabled={!canScrollRight}
+              className="w-6 h-6 flex items-center justify-center rounded border border-[#2a2a2a] text-[#666] hover:text-white hover:border-[#444] disabled:opacity-20 disabled:cursor-default transition-colors"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Scrollable row */}
+      <div className="relative">
+        {/* Left fade hint */}
+        {canScrollLeft && (
+          <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none rounded-l-md" />
+        )}
+        {/* Right fade hint */}
+        {canScrollRight && (
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none rounded-r-md" />
+        )}
+
+        <div
+          ref={scrollRef}
+          className="flex gap-2 overflow-x-auto pb-1 scrollbar-none"
+        >
+          {images.map((image, idx) => (
+            <button
+              key={idx}
+              onClick={() => onOpen(image)}
+              className="flex-shrink-0 w-[260px] md:w-[320px] aspect-video bg-[#1a1a1a] border border-[#2a2a2a] rounded-md overflow-hidden cursor-pointer hover:border-[#3a3a3a] transition-all duration-150 group"
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
+                loading="lazy"
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

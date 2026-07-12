@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Play, FolderOpen, FileText } from "lucide-react";
+import { ArrowRight, Play, FolderOpen } from "lucide-react";
 import type { Project } from "@/data/projects";
 
 interface ProjectCardProps {
@@ -46,7 +46,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white text-black rounded-md hover:bg-[#e5e5e5] transition-all duration-150"
           >
             <Play className="w-3.5 h-3.5" />
-            Complete Demo
+            Demo Reel
           </Link>
           <Link
             href={`/project/${project.id}#features`}
@@ -55,16 +55,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             <FolderOpen className="w-3.5 h-3.5" />
             Feature Clips
           </Link>
-          {project.pdf && (
-            <a
-              href={project.pdf}
-              download
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm text-[#a0a0a0] border border-[#2a2a2a] rounded-md hover:text-white hover:bg-[#1a1a1a] hover:border-[#3a3a3a] transition-all duration-150"
-            >
-              <FileText className="w-3.5 h-3.5" />
-              Project PDF
-            </a>
-          )}
           <Link
             href={`/project/${project.id}`}
             className="inline-flex items-center gap-1.5 px-4 py-2 text-sm text-[#a0a0a0] hover:text-white transition-colors duration-150"

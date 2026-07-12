@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Play, Pause } from "lucide-react";
+import { useVideoPlayback } from "@/contexts/VideoPlaybackContext";
+import { getVideoUrl } from "@/config/video";
 import type { FeatureClip } from "@/data/projects";
 
 interface FeatureCardProps {
@@ -18,16 +20,34 @@ export default function FeatureCard({ clip }: FeatureCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [videoError, setVideoError] = useState(false);
 
+  const { requestPlay, releaseVideo } = useVideoPlayback();
   const isVideo = isVideoFile(clip.video);
+  const resolvedVideo = getVideoUrl(clip.video);
+  const resolvedThumb = getVideoUrl(clip.thumbnail);
 
-  const togglePlay = () => {
+  // Release video on unmount
+  useEffect(() => {
+    const el = videoRef.current;
+    return () => {
+      if (el) releaseVideo(el);
+    };
+  }, [releaseVideo]);
+
+  const togglePlay = useCallback(() => {
     if (!videoRef.current || !isVideo) return;
     if (isPlaying) {
       videoRef.current.pause();
+      releaseVideo(videoRef.current);
+      setIsPlaying(false);
     } else {
-      videoRef.current.play();
+      requestPlay(videoRef.current);
+      setIsPlaying(true);
     }
-    setIsPlaying(!isPlaying);
+  }, [isPlaying, isVideo, requestPlay, releaseVideo]);
+
+  const handleEnded = () => {
+    setIsPlaying(false);
+    if (videoRef.current) releaseVideo(videoRef.current);
   };
 
   return (
@@ -40,20 +60,22 @@ export default function FeatureCard({ clip }: FeatureCardProps) {
         {isVideo && !videoError ? (
           <video
             ref={videoRef}
-            src={clip.video}
-            poster={clip.thumbnail}
+            src={resolvedVideo}
+            poster={resolvedThumb}
             className="w-full h-full object-cover"
             onError={() => setVideoError(true)}
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
-            onEnded={() => setIsPlaying(false)}
+            onEnded={handleEnded}
             playsInline
+            disablePictureInPicture
+            controlsList="nodownload"
             preload="metadata"
             muted
           />
         ) : (
           <img
-            src={clip.thumbnail}
+            src={resolvedThumb}
             alt={clip.title}
             className="w-full h-full object-cover"
           />

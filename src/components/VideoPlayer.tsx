@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Play, Pause, Maximize, Minimize, VideoOff } from "lucide-react";
+import { useVideoPlayback } from "@/contexts/VideoPlaybackContext";
+import { getVideoUrl } from "@/config/video";
 
 interface VideoPlayerProps {
   src: string;
@@ -14,6 +16,11 @@ function isVideoFile(src: string): boolean {
   return videoExts.some((ext) => src.toLowerCase().endsWith(ext));
 }
 
+function isTouchDevice(): boolean {
+  if (typeof window === "undefined") return false;
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+}
+
 export default function VideoPlayer({ src, poster, className }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -24,21 +31,44 @@ export default function VideoPlayer({ src, poster, className }: VideoPlayerProps
   const [duration, setDuration] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const [videoError, setVideoError] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
 
+  const { requestPlay, releaseVideo } = useVideoPlayback();
+  const resolvedSrc = getVideoUrl(src);
+  const resolvedPoster = poster ? getVideoUrl(poster) : undefined;
   const isVideo = isVideoFile(src);
+
+  useEffect(() => {
+    setIsTouch(isTouchDevice());
+  }, []);
 
   useEffect(() => {
     setVideoError(false);
   }, [src]);
 
-  const togglePlay = () => {
+  // Release video on unmount
+  useEffect(() => {
+    const el = videoRef.current;
+    return () => {
+      if (el) releaseVideo(el);
+    };
+  }, [releaseVideo]);
+
+  const togglePlay = useCallback(() => {
     if (!videoRef.current || !isVideo) return;
     if (isPlaying) {
       videoRef.current.pause();
+      releaseVideo(videoRef.current);
+      setIsPlaying(false);
     } else {
-      videoRef.current.play();
+      requestPlay(videoRef.current);
+      setIsPlaying(true);
     }
-    setIsPlaying(!isPlaying);
+  }, [isPlaying, isVideo, requestPlay, releaseVideo]);
+
+  const handleEnded = () => {
+    setIsPlaying(false);
+    if (videoRef.current) releaseVideo(videoRef.current);
   };
 
   const toggleFullscreen = () => {
@@ -103,9 +133,9 @@ export default function VideoPlayer({ src, poster, className }: VideoPlayerProps
           <p className="text-xs text-[#6a6a6a]">
             {videoError ? "Video failed to load" : "Placeholder — add .mp4 file"}
           </p>
-          {poster && (
+          {resolvedPoster && (
             <img
-              src={poster}
+              src={resolvedPoster}
               alt="Video poster"
               className="absolute inset-0 w-full h-full object-cover opacity-20"
             />
@@ -122,17 +152,19 @@ export default function VideoPlayer({ src, poster, className }: VideoPlayerProps
     >
       <video
         ref={videoRef}
-        src={src}
-        poster={poster}
+        src={resolvedSrc}
+        poster={resolvedPoster}
         className="w-full h-full object-contain cursor-pointer"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onError={handleError}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={handleEnded}
         onClick={togglePlay}
         playsInline
+        disablePictureInPicture
+        controlsList="nodownload"
         preload="metadata"
       />
 
@@ -148,8 +180,12 @@ export default function VideoPlayer({ src, poster, className }: VideoPlayerProps
         </div>
       )}
 
-      {/* Controls bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      {/* Controls bar — hover on desktop, always visible on touch */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 transition-opacity duration-200 ${
+          isTouch ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+        }`}
+      >
         {/* Progress bar */}
         <div
           className="w-full h-1 bg-white/20 rounded-full mb-2 cursor-pointer"

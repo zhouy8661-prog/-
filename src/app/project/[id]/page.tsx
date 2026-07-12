@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Download, Play } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import VideoPlayer from "@/components/VideoPlayer";
 import FeatureCard from "@/components/FeatureCard";
 import Gallery from "@/components/Gallery";
+import VideoPlaybackWrapper from "@/components/VideoPlaybackWrapper";
 import { portfolioData } from "@/data/projects";
 
 export function generateStaticParams() {
@@ -26,15 +27,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   return (
     <>
       <Navbar />
-      <main className="flex-1 pt-12">
-        <div className="max-w-4xl mx-auto px-6 py-12">
+      <VideoPlaybackWrapper>
+        <main className="flex-1 pt-12">
+          <div className="max-w-4xl mx-auto px-6 py-12">
           {/* Back */}
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-[#a0a0a0] hover:text-white transition-colors duration-150 mb-10"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Back to Portfolio
+            Back to Library
           </Link>
 
           {/* Project Header */}
@@ -59,11 +61,28 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </div>
           </div>
 
-          {/* Complete Demo Section */}
+          {/* Trailer Section */}
+          {project.trailer && (
+            <section className="mb-16">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-0.5 h-4 bg-white" />
+                <h2 className="text-base font-medium text-white">
+                  {project.trailer.label ?? "Official Trailer"}
+                </h2>
+              </div>
+              <VideoPlayer
+                src={project.trailer.video}
+                poster={project.trailer.thumbnail}
+                className="aspect-video"
+              />
+            </section>
+          )}
+
+          {/* Complete Gameplay Section */}
           <section className="mb-16">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-0.5 h-4 bg-white" />
-              <h2 className="text-base font-medium text-white">Complete Demo</h2>
+              <h2 className="text-base font-medium text-white">Complete Gameplay</h2>
             </div>
             <VideoPlayer
               src={project.completeDemo.video}
@@ -105,27 +124,28 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </div>
               <a
                 href={project.pdf}
-                download
+                rel="nofollow"
                 className="inline-flex items-center gap-2 px-4 py-2.5 text-sm bg-white text-black rounded-md hover:bg-[#e5e5e5] transition-all duration-150"
               >
-                <Download className="w-4 h-4" />
-                Download Project PDF
+                <FileText className="w-4 h-4" />
+                View Project PDF
               </a>
             </section>
           )}
 
-          {/* Back to Portfolio */}
+          {/* Back to Library */}
           <div className="pt-8 border-t border-[#2a2a2a]">
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-sm text-[#a0a0a0] hover:text-white transition-colors duration-150"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Back to Portfolio
+              Back to Library
             </Link>
           </div>
         </div>
       </main>
+      </VideoPlaybackWrapper>
     </>
   );
 }

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navLinks = [
-  { href: "/", label: "Portfolio" },
+  { href: "/", label: "Library" },
   { href: "/about", label: "About" },
 ];
 
@@ -40,7 +40,7 @@ export default function Navbar() {
               key={link.label}
               href={link.href}
               target={link.href.startsWith("http") ? "_blank" : undefined}
-              rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              rel={link.href.startsWith("http") ? "noopener noreferrer nofollow" : "nofollow"}
               className="text-sm text-[#a0a0a0] hover:text-white transition-colors duration-150"
             >
               {link.label}
