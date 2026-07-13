@@ -32,9 +32,11 @@ jobs:
 
       - name: Build (static export)
         # NEXT_PUBLIC_BASE_PATH 让资源路径自动适配 GitHub Pages 子路径 /<仓库名>/
+        # NEXT_PUBLIC_VIDEO_CDN_URL: 腾讯云 COS CDN 地址（视频从 CDN 加载）
         run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          NEXT_PUBLIC_VIDEO_CDN_URL: ${{ vars.VIDEO_CDN_URL || '' }}
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
