@@ -74,6 +74,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <VideoPlayer
                 src={project.trailer.video}
                 poster={project.trailer.thumbnail}
+                bilibiliBvid={project.trailer.bilibiliBvid}
                 className="aspect-video"
               />
             </section>
@@ -88,6 +89,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <VideoPlayer
               src={project.completeDemo.video}
               poster={project.completeDemo.thumbnail}
+              bilibiliBvid={project.completeDemo.bilibiliBvid}
               className="aspect-video"
             />
           </section>

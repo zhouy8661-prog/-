@@ -4,11 +4,14 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Play, Pause, Maximize, Minimize, VideoOff } from "lucide-react";
 import { useVideoPlayback } from "@/contexts/VideoPlaybackContext";
 import { getVideoUrl } from "@/config/video";
+import BilibiliPlayer, { isBilibiliBvid } from "@/components/BilibiliPlayer";
 
 interface VideoPlayerProps {
   src: string;
   poster?: string;
   className?: string;
+  /** B站 BV号，优先级高于本地视频 */
+  bilibiliBvid?: string;
 }
 
 function isVideoFile(src: string): boolean {
@@ -21,7 +24,21 @@ function isTouchDevice(): boolean {
   return "ontouchstart" in window || navigator.maxTouchPoints > 0;
 }
 
-export default function VideoPlayer({ src, poster, className }: VideoPlayerProps) {
+export default function VideoPlayer({ src, poster, className, bilibiliBvid }: VideoPlayerProps) {
+  // --- B站优先 ---
+  const effectiveBvid = isBilibiliBvid(bilibiliBvid) ? bilibiliBvid : undefined;
+
+  if (effectiveBvid) {
+    return (
+      <BilibiliPlayer
+        bvid={effectiveBvid}
+        poster={poster ? getVideoUrl(poster) : undefined}
+        className={className}
+      />
+    );
+  }
+
+  // --- 原生视频 ---
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);

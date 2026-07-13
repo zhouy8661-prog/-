@@ -4,6 +4,8 @@ export interface FeatureClip {
   description: string;
   thumbnail: string;
   video: string;
+  /** B站 BV号，如果设置则优先使用B站播放器（国内秒开） */
+  bilibiliBvid?: string;
   duration: string;
 }
 
@@ -25,11 +27,15 @@ export interface Project {
     thumbnail: string;
     duration: string;
     label?: string;
+    /** B站 BV号，如果设置则优先使用B站播放器 */
+    bilibiliBvid?: string;
   };
   completeDemo: {
     video: string;
     thumbnail: string;
     duration: string;
+    /** B站 BV号，如果设置则优先使用B站播放器 */
+    bilibiliBvid?: string;
   };
   featureClips: FeatureClip[];
   gallery: GalleryImage[];

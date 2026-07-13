@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { X, Play, Pause } from "lucide-react";
 import { getVideoUrl } from "@/config/video";
+import BilibiliPlayer, { isBilibiliBvid } from "@/components/BilibiliPlayer";
 import type { FeatureClip } from "@/data/projects";
 
 interface VideoModalProps {
@@ -25,6 +26,7 @@ export default function VideoModal({ clip, onClose }: VideoModalProps) {
 
   const resolvedSrc = clip ? getVideoUrl(clip.video) : "";
   const resolvedPoster = clip ? getVideoUrl(clip.thumbnail) : "";
+  const effectiveBvid = clip && isBilibiliBvid(clip.bilibiliBvid) ? clip.bilibiliBvid! : undefined;
 
   // Stop body scroll & listen for ESC
   useEffect(() => {
@@ -111,67 +113,73 @@ export default function VideoModal({ clip, onClose }: VideoModalProps) {
         className="relative max-w-[90vw] max-h-[85vh] w-full aspect-video z-10 bg-black rounded-lg overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <video
-          ref={videoRef}
-          src={resolvedSrc}
-          poster={resolvedPoster}
-          className="w-full h-full object-contain cursor-pointer"
-          onLoadedMetadata={handleLoadedMetadata}
-          onTimeUpdate={handleTimeUpdate}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          onEnded={handleVideoEnded}
-          onClick={togglePlay}
-          playsInline
-          controls={false}
-          preload="auto"
-          muted
-        />
-
-        {/* Center play button */}
-        {!isPlaying && (
-          <div
-            className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer"
-            onClick={togglePlay}
-          >
-            <div className="w-16 h-16 flex items-center justify-center rounded-full bg-white/90 hover:bg-white transition-colors">
-              <Play className="w-7 h-7 text-black ml-0.5" />
-            </div>
-          </div>
-        )}
-
-        {/* Bottom controls bar */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 pt-8">
-          {/* Progress bar */}
-          <div
-            className="w-full h-1.5 bg-white/20 rounded-full mb-3 cursor-pointer hover:h-2 transition-all"
-            onClick={handleSeek}
-          >
-            <div
-              className="h-full bg-white rounded-full transition-all duration-100"
-              style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+        {effectiveBvid ? (
+          <BilibiliPlayer bvid={effectiveBvid} poster={resolvedPoster} className="w-full h-full" />
+        ) : (
+          <>
+            <video
+              ref={videoRef}
+              src={resolvedSrc}
+              poster={resolvedPoster}
+              className="w-full h-full object-contain cursor-pointer"
+              onLoadedMetadata={handleLoadedMetadata}
+              onTimeUpdate={handleTimeUpdate}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={handleVideoEnded}
+              onClick={togglePlay}
+              playsInline
+              controls={false}
+              preload="auto"
+              muted
             />
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
+            {/* Center play button */}
+            {!isPlaying && (
+              <div
+                className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer"
                 onClick={togglePlay}
-                className="text-white hover:text-white/80 transition-colors"
               >
-                {isPlaying ? (
-                  <Pause className="w-5 h-5" />
-                ) : (
-                  <Play className="w-5 h-5" />
-                )}
-              </button>
+                <div className="w-16 h-16 flex items-center justify-center rounded-full bg-white/90 hover:bg-white transition-colors">
+                  <Play className="w-7 h-7 text-black ml-0.5" />
+                </div>
+              </div>
+            )}
 
-              <span className="text-sm text-white/80 tabular-nums">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
+            {/* Bottom controls bar */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4 pt-8">
+              {/* Progress bar */}
+              <div
+                className="w-full h-1.5 bg-white/20 rounded-full mb-3 cursor-pointer hover:h-2 transition-all"
+                onClick={handleSeek}
+              >
+                <div
+                  className="h-full bg-white rounded-full transition-all duration-100"
+                  style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={togglePlay}
+                    className="text-white hover:text-white/80 transition-colors"
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-5 h-5" />
+                    ) : (
+                      <Play className="w-5 h-5" />
+                    )}
+                  </button>
+
+                  <span className="text-sm text-white/80 tabular-nums">
+                    {formatTime(currentTime)} / {formatTime(duration)}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
